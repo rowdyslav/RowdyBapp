@@ -1,5 +1,6 @@
 import uuid
 
+from requests import get, post
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
@@ -24,52 +25,32 @@ class HugApp(App):
         return layout
 
     def start_hug(self, instance):
-        def on_success(req, result):
-            print("Hug started!")
-
-        def on_failure(req, result):
-            print("Failed to start hug!")
-
-        UrlRequest(
+        post(
             f"{SERVER_URL}/start_hug",
-            req_body=f'{{"device_id": "{DEVICE_ID}"}}',
-            on_success=on_success,
-            on_failure=on_failure,
-            method="POST",
-            req_headers={"Content-type": "application/json"},
+            json={"device_id": DEVICE_ID},
+            headers={"Content-type": "application/json"},
         )
 
     def stop_hug(self, instance):
-        def on_success(req, result):
-            print("Hug stopped!")
-
-        def on_failure(req, result):
-            print("Failed to stop hug!")
-
-        UrlRequest(
+        post(
             f"{SERVER_URL}/stop_hug",
-            req_body=f'{{"device_id": "{DEVICE_ID}"}}',
-            on_success=on_success,
-            on_failure=on_failure,
-            method="POST",
-            req_headers={"Content-type": "application/json"},
+            json={"device_id": DEVICE_ID},
+            headers={"Content-type": "application/json"},
         )
 
     def check_hug(self, instance):
-        def on_success(req, result):
+        response = get(
+            f"{SERVER_URL}/check_hug?device_id={DEVICE_ID}"
+        )
+        if response.ok:
+            result = response.json()
+            print(result)
             if result.get("should_vibrate"):
                 vibrator.vibrate(3)
             elif result.get("should_cancel"):
                 vibrator.cancel()
 
-        def on_failure(req, result):
-            print("Failed to check hug status!")
 
-        UrlRequest(
-            f"{SERVER_URL}/check_hug?device_id={DEVICE_ID}",
-            on_success=on_success,
-            on_failure=on_failure,
-        )
 
 
 if __name__ == "__main__":
