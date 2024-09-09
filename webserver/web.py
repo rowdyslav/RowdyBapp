@@ -1,3 +1,4 @@
+from http import server
 from threading import Lock, Thread
 
 from flask import Flask, jsonify, request
@@ -56,7 +57,7 @@ def check_hug():
 
 
 def run_server():
-    app.run(host="0.0.0.0", port=25565)
+    app.run(host="0.0.0.0")
 
 
 if __name__ == "__main__":

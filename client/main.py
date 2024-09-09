@@ -1,14 +1,13 @@
 import uuid
 
-from requests import get, post
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.network.urlrequest import UrlRequest
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from plyer import vibrator
+from requests import get, post
 
-SERVER_URL = "http://78.31.74.66:25565"
+SERVER_URL = "http://78.31.74.66:5000"
 DEVICE_ID = str(uuid.uuid4())
 
 
@@ -39,9 +38,7 @@ class HugApp(App):
         )
 
     def check_hug(self, instance):
-        response = get(
-            f"{SERVER_URL}/check_hug?device_id={DEVICE_ID}"
-        )
+        response = get(f"{SERVER_URL}/check_hug?device_id={DEVICE_ID}")
         if response.ok:
             result = response.json()
             print(result)
@@ -49,8 +46,6 @@ class HugApp(App):
                 vibrator.vibrate(3)
             elif result.get("should_cancel"):
                 vibrator.cancel()
-
-
 
 
 if __name__ == "__main__":
